@@ -23,7 +23,7 @@ Tech Stack
 
 Getting Started
 Clone the repo:
-git clone https://github.com/your-username/json-schema-builder
+git clone https://github.com/ikshitas31/json-schema-builder
 
 Install dependencies:
 cd json-schema-builder
