@@ -1,0 +1,39 @@
+
+Features
+Add / Edit / Delete fields
+
+Field types supported: String, Number, Nested
+
+Recursive nesting of fields using the same component
+
+Live JSON preview panel
+
+Built with React + Ant Design
+
+Learned how to handle recursive UI components in React
+
+Practiced Ant Design’s form and layout system
+
+Tech Stack
+1) ReactJS
+
+2) Ant Design (UI library)
+
+3) JavaScript (no TypeScript for simplicity)
+
+Getting Started
+Clone the repo:
+git clone https://github.com/your-username/json-schema-builder
+
+Install dependencies:
+cd json-schema-builder
+npm install
+
+Run the project:
+npm start
+
+Then go to http://localhost:3000 to view it in the browser.
+
+
+
+
