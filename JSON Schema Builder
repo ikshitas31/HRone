@@ -1,0 +1,120 @@
+// json-schema-builder/src/App.jsx
+import React, { useState } from "react";
+import { Button, Input, Select, Card } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
+
+const { Option } = Select;
+
+const Field = ({ field, onChange, onDelete }) => {
+  return (
+    <div style={{ marginBottom: 12, paddingLeft: field.depth * 20 }}>
+      <Input
+        placeholder="Field Name"
+        value={field.name}
+        onChange={(e) => onChange({ ...field, name: e.target.value })}
+        style={{ width: 150, marginRight: 8 }}
+      />
+      <Select
+        value={field.type}
+        style={{ width: 120, marginRight: 8 }}
+        onChange={(value) => onChange({ ...field, type: value, children: value === 'Nested' ? [] : undefined })}
+      >
+        <Option value="String">String</Option>
+        <Option value="Number">Number</Option>
+        <Option value="Nested">Nested</Option>
+      </Select>
+      <Button icon={<DeleteOutlined />} onClick={onDelete} danger />
+      {field.type === "Nested" && (
+        <div style={{ marginTop: 8 }}>
+          {field.children.map((child, index) => (
+            <Field
+              key={index}
+              field={child}
+              onChange={(newChild) => {
+                const updated = [...field.children];
+                updated[index] = newChild;
+                onChange({ ...field, children: updated });
+              }}
+              onDelete={() => {
+                const updated = field.children.filter((_, i) => i !== index);
+                onChange({ ...field, children: updated });
+              }}
+            />
+          ))}
+          <Button
+            onClick={() =>
+              onChange({
+                ...field,
+                children: [
+                  ...field.children,
+                  { name: "", type: "String", depth: field.depth + 1 },
+                ],
+              })
+            }
+            style={{ marginTop: 8 }}
+          >
+            Add Nested Field
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const App = () => {
+  const [fields, setFields] = useState([]);
+
+  const buildJSON = (fieldsArray) => {
+    const result = {};
+    fieldsArray.forEach((field) => {
+      if (field.type === "Nested") {
+        result[field.name] = buildJSON(field.children);
+      } else {
+        result[field.name] = field.type;
+      }
+    });
+    return result;
+  };
+
+  return (
+    <div style={{ padding: 20, display: "flex", gap: 40 }}>
+      <div>
+        <h2>Schema Builder</h2>
+        {fields.map((field, index) => (
+          <Field
+            key={index}
+            field={field}
+            onChange={(newField) => {
+              const updated = [...fields];
+              updated[index] = newField;
+              setFields(updated);
+            }}
+            onDelete={() => {
+              const updated = fields.filter((_, i) => i !== index);
+              setFields(updated);
+            }}
+          />
+        ))}
+        <Button
+          type="primary"
+          onClick={() =>
+            setFields([
+              ...fields,
+              { name: "", type: "String", depth: 0 },
+            ])
+          }
+        >
+          Add Field
+        </Button>
+      </div>
+      <div>
+        <h2>Live JSON Preview</h2>
+        <Card>
+          <pre>{JSON.stringify(buildJSON(fields), null, 2)}</pre>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default App;
